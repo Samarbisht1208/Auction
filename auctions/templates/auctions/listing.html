@@ -1,0 +1,116 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+    <!-- checking the alert message from bid function  -->
+    {% if update_placeholder == 'True' %}
+        <div class="alert alert-success" role="alert">
+            {{ message_placeholder }}
+        </div>
+    {% elif update_placeholder  == 'kuch_bhi_nhi' %}
+        <div>
+            
+        </div>
+    {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{ message_placeholder }}
+        </div>
+    {% endif %}
+
+    <!-- who is winning the auction -->
+    {% if not listing_content_placeholder.isActive and user == listing_content_placeholder.price.user %}
+        <div class="alert alert-success" role="alert">
+            Congratulations! You won the auction!
+        </div>
+    {% endif %}
+
+
+
+    <h1>Listing: {{ listing_content_placeholder.title }}</h1>
+    <div class="row mx-3">
+        <!-- adding or removing from watchlist -->
+        {% if user.is_authenticated and listing_content_placeholder.isActive%}
+            {% if is_owner_placeholder %}
+                <div>
+
+                </div>
+            {% else %}
+                {% if is_listing_in_watchlistlist_placeholder %}
+                    <form action="{% url 'remove' id=listing_content_placeholder.id %}" method="post">
+                        {% csrf_token %}
+                        <button class="btn btn-danger">Remove From Watchlist</button>
+                    </form>
+                {% else %}
+                <form action="{% url 'add' id=listing_content_placeholder.id %}" method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-success">Add To Watchlist</button>
+                </form>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+    <br>
+
+    <!-- listing Details -->
+    <img src="{{ listing_content_placeholder.imageURL }}" style="height: 400px; width: auto;" alt="{{ listing_content_placeholder.title }}">
+    <p><strong>{{ listing_content_placeholder.title }}</strong></p>
+    <h6><strong>₹{{ listing_content_placeholder.price.bid }}</strong></h6>
+    <br>
+    <br>
+
+    
+    <!-- for bidding column -->
+    {% if user.is_authenticated and listing_content_placeholder.isActive %}
+        {% if is_owner_placeholder %}
+            <form action="{% url 'bid_khatam' id=listing_content_placeholder.id %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger" type="submit">End Auction</button>
+            </form>
+        {% else %}
+            <h6>{{ bid_no_placeholder }} bid(s) so far. Your bid is the current bid</h6>
+            <form action="{% url 'bid_daal' id=listing_content_placeholder.id %}" method="post">
+                {% csrf_token %}
+                <input type="number" min="0" class="form-control" placeholder="Bid" name="bidding_data">
+                <br>
+                <button class="btn btn-primary" type="submit">Place Bid</button>
+            </form>
+        {% endif %}
+    {% endif %}
+
+    <br>
+    <br>
+    <h2>Details</h2>
+    <ul>
+        <li><strong>Listed By:</strong> {{ listing_content_placeholder.owner }}</li>
+        <li><strong>Category:</strong> {{ listing_content_placeholder.category }}</li>
+        <li><strong>Description:</strong></li>
+        <p>{{ listing_content_placeholder.description }}</p>
+    </ul>
+    <br>
+    <br>
+
+    <!-- for commenting and comments -->
+    {% if user.is_authenticated %}
+        <h2>Add Comment</h2>
+        <form action="{% url 'add_comment' id=listing_content_placeholder.id %}" method="post">
+            {% csrf_token %}
+            <textarea name="new_comment_data" class="form-control" placeholder="Add New Comment"></textarea>
+            <br>
+            <button type="submit" class="btn btn-success">Add Comment</button>
+        </form>
+    {% endif %}
+    <br>
+    <br>
+    
+    <div class="comments_box">
+        <h2>Comments</h2>
+        <ul class="list-group">
+            {% for i in all_comments_placeholder %}
+                <li class="list-group-item">{{ i.message }}</li>
+                <p>Commented By: <strong>{{ i.author }}</strong></p>
+                <br>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}

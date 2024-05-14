@@ -1,0 +1,40 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Create Listings</h2>
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'create_kr' %}" method="post">
+        {% csrf_token %}
+
+        <label>Title:</label>
+        <input type="text" class="form-control" placeholder="Title" name="title_data">
+        <br>
+
+        <label>Description:</label>
+        <br>
+        <textarea name="description_data" class="form-control"></textarea>
+        <br>
+
+        <label>Image URL:</label>
+        <input type="text" class="form-control" placeholder="URL for Image" name="image_data">
+        <br>
+
+        <label>Price:</label>
+        <input type="number" min="0" class="form-control" placeholder="Price" name="price_data">
+        <br>
+        
+        <label>Category:</label>
+        <select name="category_data">
+            <option disabled selected></option>
+            {% for i in category_placeholder %}
+                <option value="{{ i }}">{{ i }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <br>
+        
+        <button class="btn btn-success" type="submit">Create New List</button>
+    </form>
+    {% endif %}
+{% endblock %}
